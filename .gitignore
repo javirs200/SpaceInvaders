@@ -1,0 +1,6 @@
+# Build output
+build/
+
+# Local runtime library
+libfreeglut.dll
+
