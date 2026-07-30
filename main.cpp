@@ -101,6 +101,7 @@ const int altoVida=30;
 const int separacionVidaX=10;
 
 const int margen = 65; // margen para los marcianos ,respecto a la parte inferior de la pantalla
+const float margenAliens = 0.1; // margenes laterales , en porcentaje 
 const int marco = 150; // margen para los marcianos ,respecto a la parte superior de la pantalla
 
 int maximaPuntuacion;
@@ -183,8 +184,12 @@ void initVariables(){
 
     maximaPuntuacion=cargarScore();
 
-    limderecho=ancho-((anchoMarciano*11)+(separacionX*10)+100);
-    limizquierdo = 100;
+    //limites dinamicos que se calculan en funcion de la pantalla 
+
+    // el limite por la izquierda y por la derecha de la pantalla 
+    limizquierdo = ancho*margenAliens; 
+    limderecho =ancho-((anchoMarciano*11)+(separacionX*10)+limizquierdo);
+     
 
     xCanion= limizquierdo;
 
@@ -494,6 +499,7 @@ void keyoperations (void){
         if(xCanion<limDerechoCanion)
         xCanion += 10;
     }
+
     if (specialpressed[GLUT_KEY_LEFT]){
         if(xCanion>limizquierdo)
         xCanion -= 10;
