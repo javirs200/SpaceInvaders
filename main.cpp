@@ -17,15 +17,15 @@ using namespace std;
 // reduccion de velocidad para sincronia con fps ??
 #define TICK_INTERVAL 30
 
-//TODO 
-//estas constantes eran para una posterior implementacion de las texturas
+// TODO
+// estas constantes eran para una posterior implementacion de las texturas
 #define CASA_OK 0
 #define CASA_SEMI 1
 #define CASA_ROTA 2
 #define CASA_MUY 3
 #define CASA_NO 4
 
-//VARIABLES TIPOS LIBRERIAS
+// VARIABLES TIPOS LIBRERIAS
 GLuint next_time;
 
 GLuint CanionDL;
@@ -35,20 +35,20 @@ GLuint CasaDL;
 GLuint OvniDL;
 GLuint VidasDL;
 
-//VARIABLES TIPOS NORMALES
+// VARIABLES TIPOS NORMALES
 bool keypressed[256];
 bool specialpressed[256];
 
 bool idaMarcianos;
 bool idaOvni;
 
-bool disp;// booleano que controla si hemos disparado
+bool disp; // booleano que controla si hemos disparado
 
 int puntos;
 
-int ancho, alto;//ancho y alto de la pantalla
+int ancho, alto; // ancho y alto de la pantalla
 
-int xCanion ;
+int xCanion;
 
 int xMisil;
 int yMisil;
@@ -56,26 +56,25 @@ int yMisil;
 int xMarcianos;
 int yMarcianos;
 
-int xCasa;//coordenada x a partir de la cual se colocan las casas
-int yCasa;//coordenada y a partir de la cual se colocan las casas
+int xCasa; // coordenada x a partir de la cual se colocan las casas
+int yCasa; // coordenada y a partir de la cual se colocan las casas
 
-int xOvni;//pos x ovni
-int yOvni;//pos y ovni
+int xOvni; // pos x ovni
+int yOvni; // pos y ovni
 
-int xVidas;//coordenada x a partir de la que se colocan las vidas
-int yVidas;//coordenada y a partir de la que se colocan las vidas
-int numVidas;//vidas que te quedan;
-
+int xVidas;   // coordenada x a partir de la que se colocan las vidas
+int yVidas;   // coordenada y a partir de la que se colocan las vidas
+int numVidas; // vidas que te quedan;
 
 int limDerechoCanion;
 
 int limderechoOvni;
 
-int limderecho;//limite derecho solo para los marcianos
+int limderecho; // limite derecho solo para los marcianos
 
-int limizquierdo;//limite izquierdo comun por que se trabajo con cordenadas con origen en la derecha
+int limizquierdo; // limite izquierdo comun por que se trabajo con cordenadas con origen en la derecha
 
-//CONSTANTES
+// CONSTANTES
 const int anchoCanion = 50;
 const int altoCanion = 50;
 
@@ -84,56 +83,61 @@ const int anchoMisil = 14;
 const int anchoMarciano = 70;
 const int altoMarciano = 40;
 
-const int separacionX = 10;//separcion entre marcianos
+const int separacionX = 10; // separcion entre marcianos
 const int separacionY = 10;
 
 const int anchoCasa = 100;
 const int altoCasa = 80;
 const int separacionCasaX = 150;
 
-const int anchoOvni =70;
-const int altoOvni =30;
+const int anchoOvni = 70;
+const int altoOvni = 30;
 
-const int anchoVida=30;
-const int altoVida=30;
-const int separacionVidaX=10;
+const int anchoVida = 30;
+const int altoVida = 30;
+const int separacionVidaX = 10;
 
-const int margen = 65; // margen para los marcianos ,respecto a la parte inferior de la pantalla
-const float margenAliens = 0.1; // margenes laterales , en porcentaje 
-const int marco = 150; // margen para los marcianos ,respecto a la parte superior de la pantalla
+const int margen = 65;          // margen para los marcianos ,respecto a la parte inferior de la pantalla
+const float margenAliens = 0.1; // margenes laterales , en porcentaje
+const int marco = 150;          // margen para los marcianos ,respecto a la parte superior de la pantalla
 
 int maximaPuntuacion;
 
-struct tMarciano{
-    int x1,y1;//posicion esquina superior izquierda
-    int x2,y2;//posicion esquina inferior  derecha
-    int valor; //los puntos que vale cada marciano
-    bool vivo;//controla si esta vivo o muerto
+struct tMarciano
+{
+    int x1, y1; // posicion esquina superior izquierda
+    int x2, y2; // posicion esquina inferior  derecha
+    int valor;  // los puntos que vale cada marciano
+    bool vivo;  // controla si esta vivo o muerto
 };
 
-tMarciano MarcianosST [5][11];//matriz con los 55 marcianos
+tMarciano MarcianosST[5][11]; // matriz con los 55 marcianos
 
-struct tCasa{
-    int x1Casa,y1Casa;//posicion esquina superior izquierda
-    int x2Casa,y2Casa;//posicion esquina inferior  derecha
-    int estadoCasa; // variable que controla el estado de destriccion de la casa 0 =ok 1=semirota 2=rota 3=my rota 4=no esta
+struct tCasa
+{
+    int x1Casa, y1Casa; // posicion esquina superior izquierda
+    int x2Casa, y2Casa; // posicion esquina inferior  derecha
+    int estadoCasa;     // variable que controla el estado de destriccion de la casa 0 =ok 1=semirota 2=rota 3=my rota 4=no esta
 };
-tCasa CasasST [4];//array con las 4 casas
+tCasa CasasST[4]; // array con las 4 casas
 
-struct tOvni{
-    int x1Ovni,y1Ovni;//posicion esquina superior izquierda
-    int x2Ovni,y2Ovni;//posicion esquina inferior  derecha
+struct tOvni
+{
+    int x1Ovni, y1Ovni; // posicion esquina superior izquierda
+    int x2Ovni, y2Ovni; // posicion esquina inferior  derecha
     bool esta;
 } Ovni;
 
-struct tVidas{
-    int x1Vidas, y1Vidas;//posici�n esquina superior izquierda
-    int x2Vidas, y2Vidas;//posici�n esquina inferior derecha
-    bool VidaVisible;//indica si se muestra la vida o no
+struct tVidas
+{
+    int x1Vidas, y1Vidas; // posici�n esquina superior izquierda
+    int x2Vidas, y2Vidas; // posici�n esquina inferior derecha
+    bool VidaVisible;     // indica si se muestra la vida o no
 };
-tVidas VidasST [3]; //Array con 3 vidas
+tVidas VidasST[3]; // Array con 3 vidas
 
-void guardarScore(int ptos){//funcion que carga la maxima puntuacion
+void guardarScore(int ptos)
+{ // funcion que carga la maxima puntuacion
     char cadena[5];
     sprintf(cadena, "%d", ptos);
 
@@ -148,15 +152,17 @@ void guardarScore(int ptos){//funcion que carga la maxima puntuacion
     fs.close();
 }
 
-//funcion que carga la puntuacion
-int cargarScore(){
+// funcion que carga la puntuacion
+int cargarScore()
+{
     char cadena[10] = "0"; // Tamaño seguro e inicializado en 0
 
     // abre el fichero de entrada
     ifstream fin("Score.txt");
 
     // Validamos que el archivo realmente exista antes de leer
-    if(fin.is_open()){
+    if (fin.is_open())
+    {
         fin.getline(cadena, 10);
         fin.close();
     }
@@ -164,267 +170,294 @@ int cargarScore(){
     return atoi(cadena);
 }
 
-
-
-//inicializa las variables globales
-void initVariables(){
+// inicializa las variables globales
+void initVariables()
+{
 
     ancho = glutGet(GLUT_SCREEN_WIDTH);
-    alto  = glutGet(GLUT_SCREEN_HEIGHT);
+    alto = glutGet(GLUT_SCREEN_HEIGHT);
 
-    idaMarcianos=true;//booleano para controlar si los marcianos van o vienen
+    idaMarcianos = true; // booleano para controlar si los marcianos van o vienen
 
     idaOvni = true;
 
-    disp=false;// booleano que controla si hemos disparado
+    disp = false; // booleano que controla si hemos disparado
 
     puntos = 0;
 
-    maximaPuntuacion=cargarScore();
+    maximaPuntuacion = cargarScore();
 
-    //limites dinamicos que se calculan en funcion de la pantalla 
+    // limites dinamicos que se calculan en funcion de la pantalla
 
-    // el limite por la izquierda y por la derecha de la pantalla 
-    limizquierdo = ancho*margenAliens; 
-    limderecho =ancho-((anchoMarciano*11)+(separacionX*10)+limizquierdo);
-     
+    // el limite por la izquierda y por la derecha de la pantalla
+    limizquierdo = ancho * margenAliens;
+    limderecho = ancho - ((anchoMarciano * 11) + (separacionX * 10) + limizquierdo);
 
-    xCanion= limizquierdo;
+    xCanion = limizquierdo;
 
     xMisil = limizquierdo;
     yMisil = 0;
 
-    xMarcianos= limizquierdo;
-    yMarcianos=alto-(altoMarciano*5+separacionY*4)-marco;
+    xMarcianos = limizquierdo;
+    yMarcianos = alto - (altoMarciano * 5 + separacionY * 4) - marco;
 
-    xCasa = limizquierdo+150;//coordenada x a partir de la cual se colocan las casas
-    yCasa = margen;//coordenada y a partir de la cual se colocan las casas
+    xCasa = limizquierdo + 150; // coordenada x a partir de la cual se colocan las casas
+    yCasa = margen;             // coordenada y a partir de la cual se colocan las casas
 
-    xOvni=limizquierdo;
-    yOvni=alto - (marco+50);
+    xOvni = limizquierdo;
+    yOvni = alto - (marco + 50);
 
-    xVidas = limizquierdo +640;
-    yVidas = alto-85;
+    xVidas = limizquierdo + 640;
+    yVidas = alto - 85;
 
-    limDerechoCanion=ancho-(anchoCanion+limizquierdo);
+    limDerechoCanion = ancho - (anchoCanion + limizquierdo);
 
-    limderechoOvni=ancho -(anchoOvni +limizquierdo);
+    limderechoOvni = ancho - (anchoOvni + limizquierdo);
 
+    numVidas = 3; // desde el principio tienes 3 vidas
 
-    numVidas=3; //desde el principio tienes 3 vidas
-
-
-    next_time = glutGet(GLUT_ELAPSED_TIME) + TICK_INTERVAL ;
+    next_time = glutGet(GLUT_ELAPSED_TIME) + TICK_INTERVAL;
 }
 
-void initMarcianos(){
-    for(int i = 0 ; i<5 ;i++){
-        for(int j = 0 ; j <11 ; j++){
-            MarcianosST[i][j].vivo=true;
-            MarcianosST[i][j].x1=j*(anchoMarciano+separacionX);
-            MarcianosST[i][j].y1=i*(altoMarciano+separacionY);
-            MarcianosST[i][j].x2=j*(anchoMarciano+separacionX)+anchoMarciano;
-            MarcianosST[i][j].y2=i*(altoMarciano+separacionY)+altoMarciano;
-            MarcianosST[i][j].valor=i*10+10;
+void initMarcianos()
+{
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 11; j++)
+        {
+            MarcianosST[i][j].vivo = true;
+            MarcianosST[i][j].x1 = j * (anchoMarciano + separacionX);
+            MarcianosST[i][j].y1 = i * (altoMarciano + separacionY);
+            MarcianosST[i][j].x2 = j * (anchoMarciano + separacionX) + anchoMarciano;
+            MarcianosST[i][j].y2 = i * (altoMarciano + separacionY) + altoMarciano;
+            MarcianosST[i][j].valor = i * 10 + 10;
         }
     }
 }
 
-
-void initCasas(){
-    for(int j = 0 ; j < 4 ; j++){
-            CasasST[j].x1Casa=j*(anchoCasa+separacionCasaX);
-            CasasST[j].y1Casa=altoCasa;
-            CasasST[j].x2Casa=j*(anchoCasa+separacionCasaX)+anchoCasa;
-            CasasST[j].y2Casa=altoCasa+altoCasa;
-            CasasST[j].estadoCasa= CASA_OK;
-        }
-
-}
-
-void initVidas(){
-    for(int i=0; i<3; i++){
-            VidasST[i].x1Vidas=i*(anchoVida+separacionVidaX);
-            VidasST[i].y1Vidas=altoVida;
-            VidasST[i].x2Vidas=i*(anchoVida+separacionVidaX)+anchoVida;
-            VidasST[i].y2Vidas=altoVida+altoVida;
-            VidasST[i].VidaVisible=true;
+void initCasas()
+{
+    for (int j = 0; j < 4; j++)
+    {
+        CasasST[j].x1Casa = j * (anchoCasa + separacionCasaX);
+        CasasST[j].y1Casa = altoCasa;
+        CasasST[j].x2Casa = j * (anchoCasa + separacionCasaX) + anchoCasa;
+        CasasST[j].y2Casa = altoCasa + altoCasa;
+        CasasST[j].estadoCasa = CASA_OK;
     }
 }
 
-void initOvni(){
-            Ovni.x1Ovni=0;
-            Ovni.y1Ovni=anchoOvni;
-            Ovni.x2Ovni=altoOvni;
-            Ovni.y2Ovni=0;
-            Ovni.esta= false;
+void initVidas()
+{
+    for (int i = 0; i < 3; i++)
+    {
+        VidasST[i].x1Vidas = i * (anchoVida + separacionVidaX);
+        VidasST[i].y1Vidas = altoVida;
+        VidasST[i].x2Vidas = i * (anchoVida + separacionVidaX) + anchoVida;
+        VidasST[i].y2Vidas = altoVida + altoVida;
+        VidasST[i].VidaVisible = true;
+    }
 }
 
-void initTeclas(){
+void initOvni()
+{
+    Ovni.x1Ovni = 0;
+    Ovni.y1Ovni = anchoOvni;
+    Ovni.x2Ovni = altoOvni;
+    Ovni.y2Ovni = 0;
+    Ovni.esta = false;
+}
+
+void initTeclas()
+{
     glutIgnoreKeyRepeat(1);
-    for(int i =0;i<256;i++){
-        keypressed[i]=false;
-        specialpressed[i]=false;
+    for (int i = 0; i < 256; i++)
+    {
+        keypressed[i] = false;
+        specialpressed[i] = false;
     }
 }
 
-void initListasGL(){
+void initListasGL()
+{
     CanionDL = glGenLists(1);
-    glNewList(CanionDL , GL_COMPILE);
-        glBegin(GL_QUADS);
-            
-            glColor3ub(0, 255, 0);
-            glVertex2i(0, 0);
-            glVertex2i(0, 50);
-            glVertex2i(50, 50);
-            glVertex2i(50, 0);
+    glNewList(CanionDL, GL_COMPILE);
+    glBegin(GL_QUADS);
 
-            glColor3ub(0, 255, 0);
-            glVertex2i(15, 50);
-            glVertex2i(15, 70);
-            glVertex2i(35, 70);
-            glVertex2i(35, 50);
-        glEnd();
+    glColor3ub(0, 255, 0);
+    glVertex2i(0, 0);
+    glVertex2i(0, 50);
+    glVertex2i(50, 50);
+    glVertex2i(50, 0);
+
+    glColor3ub(0, 255, 0);
+    glVertex2i(15, 50);
+    glVertex2i(15, 70);
+    glVertex2i(35, 70);
+    glVertex2i(35, 50);
+    glEnd();
     glEndList();
 
     MisilDL = glGenLists(1);
-    glNewList(MisilDL , GL_COMPILE);
-        glBegin(GL_QUADS);
-            glColor3ub(0, 0, 255);
-            glVertex2i(18, 50);
-            glVertex2i(18, 70);
-            glVertex2i(32, 70);
-            glVertex2i(32, 50);
-        glEnd();
+    glNewList(MisilDL, GL_COMPILE);
+    glBegin(GL_QUADS);
+    glColor3ub(0, 0, 255);
+    glVertex2i(18, 50);
+    glVertex2i(18, 70);
+    glVertex2i(32, 70);
+    glVertex2i(32, 50);
+    glEnd();
     glEndList();
 
     MarcianoDL = glGenLists(1);
-    glNewList(MarcianoDL , GL_COMPILE);
+    glNewList(MarcianoDL, GL_COMPILE);
     glBegin(GL_QUADS);
-            glColor3ub(134, 137, 93);
-            glVertex2i(0, 0);
-            glVertex2i(0, altoMarciano);
-            glVertex2i(anchoMarciano, altoMarciano);
-            glVertex2i(anchoMarciano, 0);
-        glEnd();
+    glColor3ub(134, 137, 93);
+    glVertex2i(0, 0);
+    glVertex2i(0, altoMarciano);
+    glVertex2i(anchoMarciano, altoMarciano);
+    glVertex2i(anchoMarciano, 0);
+    glEnd();
     glEndList();
 
     CasaDL = glGenLists(1);
-    glNewList(CasaDL , GL_COMPILE);
-            glBegin(GL_QUADS);
-            glColor3ub(0, 255, 255);
-            glVertex2i(0, 0);
-            glVertex2i(0,altoCasa );
-            glVertex2i(anchoCasa,altoCasa );
-            glVertex2i(anchoCasa, 0);
-            glEnd();
+    glNewList(CasaDL, GL_COMPILE);
+    glBegin(GL_QUADS);
+    glColor3ub(0, 255, 255);
+    glVertex2i(0, 0);
+    glVertex2i(0, altoCasa);
+    glVertex2i(anchoCasa, altoCasa);
+    glVertex2i(anchoCasa, 0);
+    glEnd();
     glEndList();
 
     OvniDL = glGenLists(1);
     glNewList(OvniDL, GL_COMPILE);
-            glBegin(GL_QUADS);
-            glColor3ub(0, 255, 255);
-            glVertex2i(0, 0);
-            glVertex2i(0, altoOvni);
-            glVertex2i(anchoOvni,altoOvni);
-            glVertex2i(anchoOvni, 0);
-            glEnd();
+    glBegin(GL_QUADS);
+    glColor3ub(0, 255, 255);
+    glVertex2i(0, 0);
+    glVertex2i(0, altoOvni);
+    glVertex2i(anchoOvni, altoOvni);
+    glVertex2i(anchoOvni, 0);
+    glEnd();
     glEndList();
 
     VidasDL = glGenLists(1);
     glNewList(VidasDL, GL_COMPILE);
-            glBegin(GL_QUADS);
-            glColor3ub(0, 255, 0);
-            glVertex2i(0,0);
-            glVertex2i(0, altoVida);
-            glVertex2i(anchoVida,altoVida);
-            glVertex2i(anchoVida,0);
-            glEnd();
+    glBegin(GL_QUADS);
+    glColor3ub(0, 255, 0);
+    glVertex2i(0, 0);
+    glVertex2i(0, altoVida);
+    glVertex2i(anchoVida, altoVida);
+    glVertex2i(anchoVida, 0);
+    glEnd();
     glEndList();
-
 }
 
-void quitarVida(){
-    if(numVidas>0){
-        for(int i; i > numVidas -1;i--){
-            VidasST[i].VidaVisible=false;
-            numVidas-=1;
+void quitarVida()
+{
+    if (numVidas > 0)
+    {
+        for (int i; i > numVidas - 1; i--)
+        {
+            VidasST[i].VidaVisible = false;
+            numVidas -= 1;
         }
     }
 }
 
-void avanza (int value){
+void avanza(int value)
+{
 
-        if(xMarcianos < limderecho && idaMarcianos){
-            xMarcianos += 10;
-        }else if(xMarcianos >= limderecho){
-            if(yMarcianos >= margen){
-                yMarcianos -= 10;
-                }else if(yMarcianos >= margen && numVidas>0){
-                quitarVida();
-            }
-
-            idaMarcianos = false;
-            xMarcianos -= 10;
+    if (xMarcianos < limderecho && idaMarcianos)
+    {
+        xMarcianos += 10;
+    }
+    else if (xMarcianos >= limderecho)
+    {
+        if (yMarcianos >= margen)
+        {
+            yMarcianos -= 10;
         }
-        else if(xMarcianos > limizquierdo && !idaMarcianos){
-            xMarcianos -= 10;
-        }else if(xMarcianos <= limizquierdo){
-            if(yMarcianos >= margen){
-                yMarcianos -= 10;
-
-            }else if(yMarcianos >= margen && numVidas>0){
-                quitarVida();
-            }
-            idaMarcianos = true;
-            xMarcianos +=10;
+        else if (yMarcianos >= margen && numVidas > 0)
+        {
+            quitarVida();
         }
 
-
+        idaMarcianos = false;
+        xMarcianos -= 10;
+    }
+    else if (xMarcianos > limizquierdo && !idaMarcianos)
+    {
+        xMarcianos -= 10;
+    }
+    else if (xMarcianos <= limizquierdo)
+    {
+        if (yMarcianos >= margen)
+        {
+            yMarcianos -= 10;
+        }
+        else if (yMarcianos >= margen && numVidas > 0)
+        {
+            quitarVida();
+        }
+        idaMarcianos = true;
+        xMarcianos += 10;
+    }
 
     glutPostRedisplay();
 
-    glutTimerFunc(500,avanza,0);
+    glutTimerFunc(500, avanza, 0);
 }
 
-void mueveOvni(){
+void mueveOvni()
+{
 
-    if(Ovni.esta){
-    if(xOvni <= limderechoOvni && idaOvni){
-        xOvni += 10;
-    }else if(xOvni >= limderechoOvni){
-        idaOvni=false;
-        xOvni -=10;
-        Ovni.esta=false;
+    if (Ovni.esta)
+    {
+        if (xOvni <= limderechoOvni && idaOvni)
+        {
+            xOvni += 10;
+        }
+        else if (xOvni >= limderechoOvni)
+        {
+            idaOvni = false;
+            xOvni -= 10;
+            Ovni.esta = false;
         }
     }
 
-    if(Ovni.esta){
-    if(xOvni >= limizquierdo && !idaOvni){
-        xOvni -= 10;
-    }else if(xOvni <= limizquierdo){
-        idaOvni = true;
-        xOvni += 10;
-        Ovni.esta=false;
+    if (Ovni.esta)
+    {
+        if (xOvni >= limizquierdo && !idaOvni)
+        {
+            xOvni -= 10;
+        }
+        else if (xOvni <= limizquierdo)
+        {
+            idaOvni = true;
+            xOvni += 10;
+            Ovni.esta = false;
         }
     }
-
 }
 
-void aleatorio(){
+void aleatorio()
+{
 
-    if (!Ovni.esta && (rand() % 2) == 0){
-    Ovni.esta=true;
+    if (!Ovni.esta && (rand() % 2) == 0)
+    {
+        Ovni.esta = true;
     }
 }
 
+void init(void)
+{
 
-void init(void){                                                    
-
-    glClearColor(0.0,0.0,0.0,1.0);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
 
-    //for random numbrer generator
+    // for random numbrer generator
     srand(time(NULL));
 
     initVariables();
@@ -441,280 +474,313 @@ void init(void){
 
     initVidas();
 
-    glutTimerFunc(500,avanza,0);
+    glutTimerFunc(500, avanza, 0);
 }
 
-
-
 // window resize callback
-void reshape(int w, int h){
+void reshape(int w, int h)
+{
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluOrtho2D(0, w, 0, h);
 }
 
-GLuint time_left(void){
+GLuint time_left(void)
+{
     GLuint now;
     now = glutGet(GLUT_ELAPSED_TIME);
-    if(next_time <= now)
+    if (next_time <= now)
         return 0;
     else
         return next_time - now;
 }
 
 //---------------keyboard----------------------------
-void special(int key,int x, int y){
+void special(int key, int x, int y)
+{
     specialpressed[key] = true;
 }
 
-void specialUp ( int key, int x, int y ){
+void specialUp(int key, int x, int y)
+{
     specialpressed[key] = false;
 }
 
-void keyboard ( unsigned char key, int x, int y ){
+void keyboard(unsigned char key, int x, int y)
+{
     keypressed[key] = true;
 }
 
-void keyboardUp ( unsigned char key, int x, int y ){
+void keyboardUp(unsigned char key, int x, int y)
+{
     keypressed[key] = false;
 }
 
 // intput callback listener
-void keyoperations (void){
+void keyoperations(void)
+{
 
-    if (keypressed[' ']){
-    disp=true;
+    if (keypressed[' '])
+    {
+        disp = true;
     }
 
     // guardar y salir ? al pulsar la tecla esc ?
-    if (keypressed[27]){
-            guardarScore(maximaPuntuacion);
-            exit(0);
+    if (keypressed[27])
+    {
+        guardarScore(maximaPuntuacion);
+        exit(0);
     }
 
-    if (specialpressed[GLUT_KEY_RIGHT]){
-        if(xCanion<limDerechoCanion)
-        xCanion += 10;
+    if (specialpressed[GLUT_KEY_RIGHT])
+    {
+        if (xCanion < limDerechoCanion)
+            xCanion += 10;
     }
 
-    if (specialpressed[GLUT_KEY_LEFT]){
-        if(xCanion>limizquierdo)
-        xCanion -= 10;
+    if (specialpressed[GLUT_KEY_LEFT])
+    {
+        if (xCanion > limizquierdo)
+            xCanion -= 10;
     }
-
-
 }
 
 // funcion que reinicia el misil y detiene el desparo actual
-void resetMisil(){ 
-    disp=false;
-    yMisil=0;
-    xMisil=xCanion;
+void resetMisil()
+{
+    disp = false;
+    yMisil = 0;
+    xMisil = xCanion;
 }
 
-//incrementa la puntuacion 'a' puntos
-void incrementarPuntos(int a){
-     // puntuacion maxima limitada a 999
-    if(puntos<999){
-        puntos+=a;
-        if (puntos>maximaPuntuacion)
-        maximaPuntuacion=puntos;
+// incrementa la puntuacion 'a' puntos
+void incrementarPuntos(int a)
+{
+    // puntuacion maxima limitada a 999
+    if (puntos < 999)
+    {
+        puntos += a;
+        if (puntos > maximaPuntuacion)
+            maximaPuntuacion = puntos;
     }
-
 }
 
-void ColisionMarciano(){
+void ColisionMarciano()
+{
     // TODO optimize / fix
-    int i,j;
-    if(disp){
-        for(i = 5 ; i>=0 ;i--){
-            for( j = 0 ; j<11 ; j++){
+    int i, j;
+    if (disp)
+    {
+        for (i = 5; i >= 0; i--)
+        {
+            for (j = 0; j < 11; j++)
+            {
                 if (MarcianosST[i][j].vivo &&
-                    (xMisil+(anchoMisil/2))>=MarcianosST[i][j].x1+xMarcianos && (xMisil+(anchoMisil/2))<=MarcianosST[i][j].x2+xMarcianos  &&
-                        yMisil>=MarcianosST[i][j].y1+yMarcianos && yMisil<=MarcianosST[i][j].y2+yMarcianos){
-                            MarcianosST[i][j].vivo=false;
-                            resetMisil();
-                            incrementarPuntos(MarcianosST[i][j].valor);
-                        }
-                    }
+                    (xMisil + (anchoMisil / 2)) >= MarcianosST[i][j].x1 + xMarcianos && (xMisil + (anchoMisil / 2)) <= MarcianosST[i][j].x2 + xMarcianos &&
+                    yMisil >= MarcianosST[i][j].y1 + yMarcianos && yMisil <= MarcianosST[i][j].y2 + yMarcianos)
+                {
+                    MarcianosST[i][j].vivo = false;
+                    resetMisil();
+                    incrementarPuntos(MarcianosST[i][j].valor);
                 }
             }
-}
-
-void ColisionOvni(){
-    // TODO optimize / fix
-    if(Ovni.esta && disp &&
-        xMisil + (anchoMisil/2) >= Ovni.x1Ovni+xOvni && xMisil + (anchoMisil/2) >= Ovni.x2Ovni +xOvni &&
-            yMisil >= Ovni.y1Ovni && yMisil <=Ovni.y2Ovni){
-                Ovni.esta=false;
-                xOvni=limizquierdo;
-                yOvni=alto-(marco+50);
-                resetMisil();
-
-
         }
-
-
-
+    }
 }
 
-void ColisionCasa(){
+void ColisionOvni()
+{
     // TODO optimize / fix
-    if(disp){
-        for(int i = 0 ; i < 4 ;i++){
-            if(CasasST[i].estadoCasa < 4 &&
-                xMisil + (anchoMisil/2) >= CasasST[i].x1Casa + xCasa && xMisil + (anchoMisil/2) <=CasasST[i].x2Casa + xCasa &&
-                    yMisil >= CasasST[i].y1Casa + yCasa && yMisil <= CasasST[i].y2Casa+yCasa){
-                        CasasST[i].estadoCasa += 1;
-                        resetMisil();
-                        if(puntos > 0)
-                        incrementarPuntos(-10);
+    if (Ovni.esta && disp &&
+        xMisil + (anchoMisil / 2) >= Ovni.x1Ovni + xOvni && xMisil + (anchoMisil / 2) >= Ovni.x2Ovni + xOvni &&
+        yMisil >= Ovni.y1Ovni && yMisil <= Ovni.y2Ovni)
+    {
+        Ovni.esta = false;
+        xOvni = limizquierdo;
+        yOvni = alto - (marco + 50);
+        resetMisil();
+    }
+}
 
-
+void ColisionCasa()
+{
+    // TODO optimize / fix
+    if (disp)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (CasasST[i].estadoCasa < 4 &&
+                xMisil + (anchoMisil / 2) >= CasasST[i].x1Casa + xCasa && xMisil + (anchoMisil / 2) <= CasasST[i].x2Casa + xCasa &&
+                yMisil >= CasasST[i].y1Casa + yCasa && yMisil <= CasasST[i].y2Casa + yCasa)
+            {
+                CasasST[i].estadoCasa += 1;
+                resetMisil();
+                if (puntos > 0)
+                    incrementarPuntos(-10);
             }
         }
     }
 }
 
 /*Implementar esta funci�n para que se cuenten las vidas*/
-//void ContadorVidas(){}
+// void ContadorVidas(){}
 
 /* Funci�n que se ejecuta cuando no hay eventos */ /*............................................IDLE........................*/
-void idle(void){
-        if(disp){
+void idle(void)
+{
+    if (disp)
+    {
 
-            if(yMisil<alto)
-                yMisil +=15;
+        if (yMisil < alto)
+            yMisil += 15;
 
-            if(yMisil >= alto){
-                resetMisil();
-                }
-        }else{
-            xMisil=xCanion;
-
+        if (yMisil >= alto)
+        {
+            resetMisil();
         }
-       aleatorio();
-        mueveOvni();
+    }
+    else
+    {
+        xMisil = xCanion;
+    }
+    aleatorio();
+    mueveOvni();
 
-
-        ColisionCasa();
-        ColisionMarciano();
-        ColisionOvni();
-        //ContadorVidas();
+    ColisionCasa();
+    ColisionMarciano();
+    ColisionOvni();
+    // ContadorVidas();
 
     glutPostRedisplay();
 }
 
-void dibujaMarcianos(){
+void dibujaMarcianos()
+{
     glPushMatrix();
-        glTranslatef(xMarcianos,yMarcianos,0);
-        for(int i = 0 ; i < 5 ;i++){
-            for(int j = 0 ; j < 11 ; j++){
-                if(MarcianosST[i][j].vivo){
-                    glPushMatrix();
-                        glTranslatef(MarcianosST[i][j].x1,MarcianosST[i][j].y1,0);
-                        glCallList(MarcianoDL);
-                    glPopMatrix();
-                }
+    glTranslatef(xMarcianos, yMarcianos, 0);
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 11; j++)
+        {
+            if (MarcianosST[i][j].vivo)
+            {
+                glPushMatrix();
+                glTranslatef(MarcianosST[i][j].x1, MarcianosST[i][j].y1, 0);
+                glCallList(MarcianoDL);
+                glPopMatrix();
             }
         }
+    }
     glPopMatrix();
 }
 
-void dibujaMarcador(){
+void dibujaMarcador()
+{
     // Ampliado a 50 bytes para evitar desbordamiento
-    char ptos[50]; 
+    char ptos[50];
     sprintf(ptos, "SCORE: %d", puntos);
     glPushMatrix();
-                    glColor3ub(0, 255, 0);
-                    glRasterPos2i(ancho-200,alto-50);
-                    glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24,
-                    (const unsigned char*)ptos);
+    glColor3ub(0, 255, 0);
+    glRasterPos2i(ancho - 200, alto - 50);
+    glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24,
+                     (const unsigned char *)ptos);
     glPopMatrix();
 }
 
-void dibujaPuntuacionMaxima(){
+void dibujaPuntuacionMaxima()
+{
     char maxPuntu[50]; // Ampliado a 50 bytes
     sprintf(maxPuntu, "MAX SCORE: %d", maximaPuntuacion);
     glPushMatrix();
-                    glColor3ub(0, 255, 0);
-                    glRasterPos2i(limizquierdo,alto-50);
-                    glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24,
-                    (const unsigned char*)maxPuntu);
+    glColor3ub(0, 255, 0);
+    glRasterPos2i(limizquierdo, alto - 50);
+    glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24,
+                     (const unsigned char *)maxPuntu);
     glPopMatrix();
 }
 
-void dibujaCasas(){
+void dibujaCasas()
+{
     glPushMatrix();
-            glTranslatef(xCasa,yCasa,0);
-            for(int j = 0 ; j < 4 ; j++){
-                if(CasasST[j].estadoCasa < 4){
-                    glPushMatrix();
-                        glTranslatef(CasasST[j].x1Casa,CasasST[j].y1Casa,0);
-                        glCallList(CasaDL);
-                    glPopMatrix();
-                    }
-                }
+    glTranslatef(xCasa, yCasa, 0);
+    for (int j = 0; j < 4; j++)
+    {
+        if (CasasST[j].estadoCasa < 4)
+        {
+            glPushMatrix();
+            glTranslatef(CasasST[j].x1Casa, CasasST[j].y1Casa, 0);
+            glCallList(CasaDL);
+            glPopMatrix();
+        }
+    }
     glPopMatrix();
 }
 
-void escribeVidas(){
+void escribeVidas()
+{
     // Ampliado a 50 bytes
-    char vidas[50]; 
+    char vidas[50];
     sprintf(vidas, "VIDAS:");
     glPushMatrix();
-                    glColor3ub(0, 255, 0);
-                    glRasterPos2i((ancho/2)-40, alto-50);
-                    glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, (const unsigned char*)vidas);
+    glColor3ub(0, 255, 0);
+    glRasterPos2i((ancho / 2) - 40, alto - 50);
+    glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, (const unsigned char *)vidas);
     glPopMatrix();
 }
 
-
-
-void dibujaVidas(){
+void dibujaVidas()
+{
     glPushMatrix();
-            glTranslatef(xVidas, yVidas, 0);
-            for(int i=0; i<3; i++){
-                if(VidasST[i].VidaVisible){
-                    glPushMatrix();
-                        glTranslatef(VidasST[i].x1Vidas, VidasST[i].y1Vidas, 0);
-                        glCallList(VidasDL);
-                    glPopMatrix();
-                }
-            }
-    glPopMatrix();
-}
-
-void dibujaOvni(){
-    if(Ovni.esta){
-    glPushMatrix();
-        glTranslatef(xOvni,yOvni,0);
+    glTranslatef(xVidas, yVidas, 0);
+    for (int i = 0; i < 3; i++)
+    {
+        if (VidasST[i].VidaVisible)
+        {
             glPushMatrix();
-                glTranslatef(Ovni.x1Ovni,Ovni.y1Ovni,0);
-                glCallList(OvniDL);
+            glTranslatef(VidasST[i].x1Vidas, VidasST[i].y1Vidas, 0);
+            glCallList(VidasDL);
             glPopMatrix();
+        }
+    }
     glPopMatrix();
+}
+
+void dibujaOvni()
+{
+    if (Ovni.esta)
+    {
+        glPushMatrix();
+        glTranslatef(xOvni, yOvni, 0);
+        glPushMatrix();
+        glTranslatef(Ovni.x1Ovni, Ovni.y1Ovni, 0);
+        glCallList(OvniDL);
+        glPopMatrix();
+        glPopMatrix();
     }
 }
 
-void dibujaMisil(){
-    if(disp){
-    glPushMatrix();
-        glTranslatef(xMisil,yMisil,0);
-        glCallList(MisilDL); //DIBUJA EL MISIL
-    glPopMatrix();
+void dibujaMisil()
+{
+    if (disp)
+    {
+        glPushMatrix();
+        glTranslatef(xMisil, yMisil, 0);
+        glCallList(MisilDL); // DIBUJA EL MISIL
+        glPopMatrix();
     }
 }
 
-void dibujaCanion(){
+void dibujaCanion()
+{
     glPushMatrix();
-        glTranslatef(xCanion,0,0);
-        glCallList(CanionDL);//DIBUJA EL CA�ON
+    glTranslatef(xCanion, 0, 0);
+    glCallList(CanionDL); // DIBUJA EL CA�ON
     glPopMatrix();
 }
 
-void display ( void ){ /*funcion que dibuja*//*..........................................DISPLAY............................*/
+void display(void)
+{ /*funcion que dibuja*/ /*..........................................DISPLAY............................*/
 
     // comprobar las teclas en la funcion de dibujado ????
     keyoperations();
@@ -743,14 +809,13 @@ void display ( void ){ /*funcion que dibuja*//*.................................
 
     glutSwapBuffers();
 
-    Sleep(time_left());  //funcion de windows
+    Sleep(time_left()); // funcion de windows
 
     next_time += TICK_INTERVAL;
-
 }
 
 /* Funci�n principal */
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 
     glutInit(&argc, argv);
@@ -761,7 +826,6 @@ int main(int argc, char** argv)
     glutInitWindowSize(0, 0);
     glutInitWindowPosition(0, 0);
 
-
     glutFullScreen();
 
     init();
@@ -770,10 +834,10 @@ int main(int argc, char** argv)
     glutReshapeFunc(reshape);
 
     glutSpecialFunc(special);
-    glutSpecialUpFunc(specialUp);//funciones para las flechas
+    glutSpecialUpFunc(specialUp); // funciones para las flechas
 
     glutKeyboardFunc(keyboard);
-    glutKeyboardUpFunc(keyboardUp);//funciones para las teclas normales
+    glutKeyboardUpFunc(keyboardUp); // funciones para las teclas normales
 
     glutSetCursor(GLUT_CURSOR_NONE);
     glutIdleFunc(idle);
