@@ -4,3 +4,5 @@ build/
 # Local runtime library
 libfreeglut.dll
 
+#file generated on debug
+Score.txt
