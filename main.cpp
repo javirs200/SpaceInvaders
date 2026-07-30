@@ -1,5 +1,3 @@
-#define FREEGLUT_STATIC //obligar a usar la libreria estatica
-
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
