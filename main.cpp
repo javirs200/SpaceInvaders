@@ -14,23 +14,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-#if defined(__has_include)
-  #if __has_include(<SDL/SDL.h>) && __has_include(<SDL/SDL_mixer.h>)
-    #include <SDL/SDL.h>
-    #include <SDL/SDL_mixer.h>
-    #define SDL_AUDIO_AVAILABLE 1
-  #else
-    #define SDL_AUDIO_AVAILABLE 0
-  #endif
-#else
-  #include <SDL/SDL.h>
-  #include <SDL/SDL_mixer.h>
-  #define SDL_AUDIO_AVAILABLE 1
-#endif
-
 using namespace std;
 
-#define TICK_INTERVAL 20
+// reduccion de velocidad para sincronia con fps ??
+#define TICK_INTERVAL 30
+
+//TODO 
 //estas constantes eran para una posterior implementacion de las texturas
 #define CASA_OK 0
 #define CASA_SEMI 1
@@ -48,23 +37,12 @@ GLuint CasaDL;
 GLuint OvniDL;
 GLuint VidasDL;
 
-#if SDL_AUDIO_AVAILABLE
-Mix_Music *musica; //para musica de fondo
-const char *file;
-#endif
-
-
 //VARIABLES TIPOS NORMALES
 bool keypressed[256];
 bool specialpressed[256];
 
-bool suenaMusica;//para que suene la musica
-
-
-bool idaMarcianos;//booleano para controlar si los marcianos van o vienen
-
+bool idaMarcianos;
 bool idaOvni;
-
 
 bool disp;// booleano que controla si hemos disparado
 
@@ -127,12 +105,6 @@ const int marco = 150; // margen para los marcianos ,respecto a la parte superio
 
 int maximaPuntuacion;
 
-/*struct textura{
-    int anchoTex, altoTex; //ancho y alto de la textura
-    ILubyte *data; //data de la textura
-};*/
-
-
 struct tMarciano{
     int x1,y1;//posicion esquina superior izquierda
     int x2,y2;//posicion esquina inferior  derecha
@@ -177,6 +149,7 @@ void guardarScore(int ptos){//funcion que carga la maxima puntuacion
     fs.close();
 }
 
+//funcion que carga la puntuacion
 int cargarScore(){
     char cadena[10] = "0"; // Tamaño seguro e inicializado en 0
 
@@ -193,49 +166,12 @@ int cargarScore(){
 }
 
 
-/*Funciones para cargar texturas*/
-/*void CargarImagen(struct texture){
 
-    ILuint texid;
-    ilGenImages(1, &texid);
-    ilBindImage(texid);
-    ilLoadImage(texture);
-    ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-
-    anchoTex = ilGetInteger(IL_IMAGE_WIDTH);
-    altoTex = ilGetInteger(IL_IMAGE_HEIGHT);
-    data = ilGetData();
-
-    ilDeleteImages(1, &texid);
-
-    return textura;
-}
-
-GLuint loadTexture(const char *file)
-{
-
-GLuint textureID;
-CargarImagen(file, anchoTex, altoTex, data); // carga la imagen
-glGenTextures(1, &textureID);
-glBindTexture(GL_TEXTURE_2D, textureID);
-glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_CLAMP);
-glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_CLAMP);
-glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,
-GL_LINEAR);
-glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,
-GL_LINEAR);
-glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-return textureID;
-}*///Fin funciones texturas
-
-
-
-void initVariables(){//inicializa las variables globales
+//inicializa las variables globales
+void initVariables(){
 
     ancho = glutGet(GLUT_SCREEN_WIDTH);
     alto  = glutGet(GLUT_SCREEN_HEIGHT);
-
-    suenaMusica = true;//para que suene la musica
 
     idaMarcianos=true;//booleano para controlar si los marcianos van o vienen
 
@@ -278,7 +214,7 @@ void initVariables(){//inicializa las variables globales
     next_time = glutGet(GLUT_ELAPSED_TIME) + TICK_INTERVAL ;
 }
 
-void initMarcianos(){ ////////////////INICIALIZACI�N DE LOS MARCIANOS
+void initMarcianos(){
     for(int i = 0 ; i<5 ;i++){
         for(int j = 0 ; j <11 ; j++){
             MarcianosST[i][j].vivo=true;
@@ -291,7 +227,8 @@ void initMarcianos(){ ////////////////INICIALIZACI�N DE LOS MARCIANOS
     }
 }
 
-void initCasas(){  ////////////////INICIALIZACI�N DE LAS CASAS
+
+void initCasas(){
     for(int j = 0 ; j < 4 ; j++){
             CasasST[j].x1Casa=j*(anchoCasa+separacionCasaX);
             CasasST[j].y1Casa=altoCasa;
@@ -312,32 +249,13 @@ void initVidas(){
     }
 }
 
-void initOvni(){  ////////////////INICIALIZACI�N DEL OVNI
+void initOvni(){
             Ovni.x1Ovni=0;
             Ovni.y1Ovni=anchoOvni;
             Ovni.x2Ovni=altoOvni;
             Ovni.y2Ovni=0;
             Ovni.esta= false;
 }
-
-#if SDL_AUDIO_AVAILABLE
-void initSonidos(){
-    file="musica2.ogg";
-    SDL_Init(SDL_INIT_AUDIO);
-    if(Mix_OpenAudio(22050,AUDIO_S8, 2,1024)>0){
-
-    }else{
-        musica=Mix_LoadMUS(file);
-        if(musica == NULL){
-            cout << "error mixer";
-        }else{
-        Mix_PlayMusic(musica,-1);
-        }
-    }
-}
-#else
-void initSonidos(){}
-#endif
 
 void initTeclas(){
     glutIgnoreKeyRepeat(1);
@@ -351,13 +269,14 @@ void initListasGL(){
     CanionDL = glGenLists(1);
     glNewList(CanionDL , GL_COMPILE);
         glBegin(GL_QUADS);
-            glColor3ub(0, 255, 0);//cuerpo del ca�on
+            
+            glColor3ub(0, 255, 0);
             glVertex2i(0, 0);
             glVertex2i(0, 50);
             glVertex2i(50, 50);
             glVertex2i(50, 0);
 
-            glColor3ub(0, 255, 0);//ca�on
+            glColor3ub(0, 255, 0);
             glVertex2i(15, 50);
             glVertex2i(15, 70);
             glVertex2i(35, 70);
@@ -368,7 +287,7 @@ void initListasGL(){
     MisilDL = glGenLists(1);
     glNewList(MisilDL , GL_COMPILE);
         glBegin(GL_QUADS);
-            glColor3ub(0, 0, 255);//Misil
+            glColor3ub(0, 0, 255);
             glVertex2i(18, 50);
             glVertex2i(18, 70);
             glVertex2i(32, 70);
@@ -377,7 +296,7 @@ void initListasGL(){
     glEndList();
 
     MarcianoDL = glGenLists(1);
-    glNewList(MarcianoDL , GL_COMPILE);//Marciano
+    glNewList(MarcianoDL , GL_COMPILE);
     glBegin(GL_QUADS);
             glColor3ub(134, 137, 93);
             glVertex2i(0, 0);
@@ -390,7 +309,7 @@ void initListasGL(){
     CasaDL = glGenLists(1);
     glNewList(CasaDL , GL_COMPILE);
             glBegin(GL_QUADS);
-            glColor3ub(0, 255, 255);///////CASA
+            glColor3ub(0, 255, 255);
             glVertex2i(0, 0);
             glVertex2i(0,altoCasa );
             glVertex2i(anchoCasa,altoCasa );
@@ -401,7 +320,7 @@ void initListasGL(){
     OvniDL = glGenLists(1);
     glNewList(OvniDL, GL_COMPILE);
             glBegin(GL_QUADS);
-            glColor3ub(0, 255, 255);///////OVNI
+            glColor3ub(0, 255, 255);
             glVertex2i(0, 0);
             glVertex2i(0, altoOvni);
             glVertex2i(anchoOvni,altoOvni);
@@ -496,14 +415,14 @@ void aleatorio(){
     }
 }
 
-/* Funci�n para inicializar algunos par�metros de OpenGL */
+
 void init(void){                                                    
-     /*......................................INIT..........*/
 
     glClearColor(0.0,0.0,0.0,1.0);
     glEnable(GL_DEPTH_TEST);
 
-    srand(time(NULL));//para luego poder generar el numero aleatorio
+    //for random numbrer generator
+    srand(time(NULL));
 
     initVariables();
 
@@ -519,15 +438,12 @@ void init(void){
 
     initVidas();
 
-    initSonidos();
-
-
     glutTimerFunc(500,avanza,0);
 }
 
 
 
-/* Funci�n que se llamar� cada vez que se redimensione la ventana */
+// window resize callback
 void reshape(int w, int h){
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
@@ -544,7 +460,8 @@ GLuint time_left(void){
         return next_time - now;
 }
 
-void special(int key,int x, int y){//pulsacion techas
+//---------------keyboard----------------------------
+void special(int key,int x, int y){
     specialpressed[key] = true;
 }
 
@@ -560,35 +477,18 @@ void keyboardUp ( unsigned char key, int x, int y ){
     keypressed[key] = false;
 }
 
+// intput callback listener
 void keyoperations (void){
 
     if (keypressed[' ']){
     disp=true;
     }
 
+    // guardar y salir ? al pulsar la tecla esc ?
     if (keypressed[27]){
-#if SDL_AUDIO_AVAILABLE
-            Mix_HaltMusic();
-            Mix_FreeMusic(musica);
-            SDL_Quit();
-#endif
             guardarScore(maximaPuntuacion);
             exit(0);
     }
-
-
-#if SDL_AUDIO_AVAILABLE
-    if(keypressed[109]){
-        if(suenaMusica){
-        Mix_HaltMusic();
-        suenaMusica=false;
-        }else if(!suenaMusica){
-        Mix_PlayMusic(musica,-1);
-        suenaMusica=true;
-        }
-    }
-#endif
-
 
     if (specialpressed[GLUT_KEY_RIGHT]){
         if(xCanion<limDerechoCanion)
@@ -602,14 +502,17 @@ void keyoperations (void){
 
 }
 
-void resetMisil(){ // funcion que reinicia el misil y detiene el desparo actual
+// funcion que reinicia el misil y detiene el desparo actual
+void resetMisil(){ 
     disp=false;
     yMisil=0;
     xMisil=xCanion;
 }
 
-void incrementarPuntos(int a){//incrementa la puntuacion 'a' puntos
-    if(puntos<999){ // puntuacion maxima limitada a 999
+//incrementa la puntuacion 'a' puntos
+void incrementarPuntos(int a){
+     // puntuacion maxima limitada a 999
+    if(puntos<999){
         puntos+=a;
         if (puntos>maximaPuntuacion)
         maximaPuntuacion=puntos;
@@ -618,6 +521,7 @@ void incrementarPuntos(int a){//incrementa la puntuacion 'a' puntos
 }
 
 void ColisionMarciano(){
+    // TODO optimize / fix
     int i,j;
     if(disp){
         for(i = 5 ; i>=0 ;i--){
@@ -635,6 +539,7 @@ void ColisionMarciano(){
 }
 
 void ColisionOvni(){
+    // TODO optimize / fix
     if(Ovni.esta && disp &&
         xMisil + (anchoMisil/2) >= Ovni.x1Ovni+xOvni && xMisil + (anchoMisil/2) >= Ovni.x2Ovni +xOvni &&
             yMisil >= Ovni.y1Ovni && yMisil <=Ovni.y2Ovni){
@@ -651,6 +556,7 @@ void ColisionOvni(){
 }
 
 void ColisionCasa(){
+    // TODO optimize / fix
     if(disp){
         for(int i = 0 ; i < 4 ;i++){
             if(CasasST[i].estadoCasa < 4 &&
@@ -693,8 +599,6 @@ void idle(void){
         ColisionOvni();
         //ContadorVidas();
 
-
-
     glutPostRedisplay();
 }
 
@@ -715,7 +619,8 @@ void dibujaMarcianos(){
 }
 
 void dibujaMarcador(){
-    char ptos[50]; // Ampliado a 50 bytes para evitar desbordamiento
+    // Ampliado a 50 bytes para evitar desbordamiento
+    char ptos[50]; 
     sprintf(ptos, "SCORE: %d", puntos);
     glPushMatrix();
                     glColor3ub(0, 255, 0);
@@ -751,7 +656,8 @@ void dibujaCasas(){
 }
 
 void escribeVidas(){
-    char vidas[50]; // Ampliado a 50 bytes
+    // Ampliado a 50 bytes
+    char vidas[50]; 
     sprintf(vidas, "VIDAS:");
     glPushMatrix();
                     glColor3ub(0, 255, 0);
@@ -806,8 +712,7 @@ void dibujaCanion(){
 
 void display ( void ){ /*funcion que dibuja*//*..........................................DISPLAY............................*/
 
-    // cout << "llega";
-
+    // comprobar las teclas en la funcion de dibujado ????
     keyoperations();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -846,14 +751,13 @@ int main(int argc, char** argv)
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-#if SDL_AUDIO_AVAILABLE
-    SDL_Init(SDL_INIT_AUDIO);
-#endif
-
-    // glutInitWindowSize(500, 300);//cambiar pos y tama�o ventana
-    // glutInitWindowPosition(200, 200);
 
     glutCreateWindow("Space invaders");
+
+    glutInitWindowSize(0, 0);
+    glutInitWindowPosition(0, 0);
+
+
     glutFullScreen();
 
     init();
